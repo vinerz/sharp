@@ -23,12 +23,12 @@
 #include "stats.h"
 
 #ifdef NODE_MODULE_INIT
+vips_init("sharp");
+
+g_log_set_handler("VIPS", static_cast<GLogLevelFlags>(G_LOG_LEVEL_WARNING),
+  static_cast<GLogFunc>(sharp::VipsWarningCallback), nullptr);
+
 NODE_MODULE_INIT() {
-  vips_init("sharp");
-
-  g_log_set_handler("VIPS", static_cast<GLogLevelFlags>(G_LOG_LEVEL_WARNING),
-    static_cast<GLogFunc>(sharp::VipsWarningCallback), nullptr);
-
   // Methods available to JavaScript
   Nan::Set(exports, Nan::New("metadata").ToLocalChecked(),
     Nan::GetFunction(Nan::New<v8::FunctionTemplate>(metadata)).ToLocalChecked());

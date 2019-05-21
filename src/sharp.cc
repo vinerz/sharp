@@ -22,6 +22,36 @@
 #include "utilities.h"
 #include "stats.h"
 
+#ifdef NODE_MODULE_INIT
+NODE_MODULE_INIT() {
+  vips_init("sharp");
+
+  g_log_set_handler("VIPS", static_cast<GLogLevelFlags>(G_LOG_LEVEL_WARNING),
+    static_cast<GLogFunc>(sharp::VipsWarningCallback), nullptr);
+
+  // Methods available to JavaScript
+  Nan::Set(exports, Nan::New("metadata").ToLocalChecked(),
+    Nan::GetFunction(Nan::New<v8::FunctionTemplate>(metadata)).ToLocalChecked());
+  Nan::Set(exports, Nan::New("pipeline").ToLocalChecked(),
+    Nan::GetFunction(Nan::New<v8::FunctionTemplate>(pipeline)).ToLocalChecked());
+  Nan::Set(exports, Nan::New("cache").ToLocalChecked(),
+    Nan::GetFunction(Nan::New<v8::FunctionTemplate>(cache)).ToLocalChecked());
+  Nan::Set(exports, Nan::New("concurrency").ToLocalChecked(),
+    Nan::GetFunction(Nan::New<v8::FunctionTemplate>(concurrency)).ToLocalChecked());
+  Nan::Set(exports, Nan::New("counters").ToLocalChecked(),
+    Nan::GetFunction(Nan::New<v8::FunctionTemplate>(counters)).ToLocalChecked());
+  Nan::Set(exports, Nan::New("simd").ToLocalChecked(),
+    Nan::GetFunction(Nan::New<v8::FunctionTemplate>(simd)).ToLocalChecked());
+  Nan::Set(exports, Nan::New("libvipsVersion").ToLocalChecked(),
+    Nan::GetFunction(Nan::New<v8::FunctionTemplate>(libvipsVersion)).ToLocalChecked());
+  Nan::Set(exports, Nan::New("format").ToLocalChecked(),
+    Nan::GetFunction(Nan::New<v8::FunctionTemplate>(format)).ToLocalChecked());
+  Nan::Set(exports, Nan::New("_maxColourDistance").ToLocalChecked(),
+    Nan::GetFunction(Nan::New<v8::FunctionTemplate>(_maxColourDistance)).ToLocalChecked());
+  Nan::Set(exports, Nan::New("stats").ToLocalChecked(),
+    Nan::GetFunction(Nan::New<v8::FunctionTemplate>(stats)).ToLocalChecked());
+}
+#else
 NAN_MODULE_INIT(init) {
   vips_init("sharp");
 
@@ -52,3 +82,4 @@ NAN_MODULE_INIT(init) {
 }
 
 NODE_MODULE(sharp, init)
+#endif
